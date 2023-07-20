@@ -6,7 +6,6 @@
 3. [**Creating Your Own User in Google Cloud SQL**](#creating-your-own-user-in-google-cloud-sql)
 4. [**Connecting to the PostgreSQL Database**](#connecting-to-the-postgresql-database)
 5. [**Executing SQL Queries**](#executing-sql-queries)
-6. [**Conclusion**](#conclusion)
 
 <a name='introduction'></a>
 ## **Introduction**
