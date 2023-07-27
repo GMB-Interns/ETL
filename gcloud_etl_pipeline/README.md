@@ -1,45 +1,94 @@
-# ETL
-Simple Extract-Transform and Load application for backing up data, cleaning, scrubbing and restoring
+# **ETL Python Pipeline to Google Cloud SQL**
 
-Ourvision is to deliver a robust and efficient ETL system based on FastAPI that seamlessly integrates with various data sources, provides flexible data transformation capabilities, enables anonymization options, facilitates the creation of test/QA data sources, and ensures reliable monitoring and error handling. Our goal is to empower users to easily extract, transform, and load data between sources, while maintaining data privacy and quality assurance.
+## **Table of Contents**
+1. [**Introduction**](#introduction)
+2. [**Pre-requisites**](#pre-requisites)
+3. [**Creating Your Own User in Google Cloud SQL**](#creating-your-own-user-in-google-cloud-sql)
+4. [**Connecting to the PostgreSQL Database**](#connecting-to-the-postgresql-database)
+5. [**Executing SQL Queries**](#executing-sql-queries)
 
-# Goals:
+<a name='introduction'></a>
+## **Introduction**
 
-- Build a scalable and secure ETL system that supports seamless integration with multiple data sources.
-- Develop data transformation capabilities to handle diverse data formats and mappings.
-- Implement anonymization options to enable users to protect sensitive data during the export process.
-- Create a test/QA data source functionality that facilitates efficient testing and validation.
-- Ensure reliable monitoring and error handling mechanisms to proactively detect and resolve issues.
+This guide provides detailed instructions on how to extract, transform, and load (ETL) data into a Google Cloud SQL PostgreSQL database using Python. The steps outlined will help you establish a secure connection to a Cloud SQL instance from a Python environment such as Jupyter Notebook or Google Colab, and then execute SQL queries to interact with the data.
 
-# OKRs (Objectives and Key Results):
+<a name='pre-requisites'></a>
+## **Pre-requisites**
 
-## Objective 1: Enhance Data Source Integration
+Before you can start working with Google Cloud SQL, make sure that you have the following:
 
-- Key Result 1: Achieve successful integration with at least three major data sources.
-- Key Result 2: Implement authentication and authorization mechanisms for secure data retrieval and export.
-- Key Result 3: Support multiple data formats and handle complex data transformations.
+1. A Google Cloud project with billing enabled.
+2. A Google Cloud SQL instance set up.
+3. The necessary Python packages installed: `psycopg2` and `sqlalchemy`.
 
-## Objective 2: Enable Anonymization Options
+<a name='creating-your-own-user-in-google-cloud-sql'></a>
+## **Creating Your Own User in Google Cloud SQL**
 
-- Key Result 1: Develop robust algorithms and techniques for anonymizing sensitive data.
-- Key Result 2: Provide configuration options to enable/disable anonymization during data export.
-- Key Result 3: Ensure data integrity and maintain high performance while anonymizing data.
+To access the Google Cloud SQL instance, each person should create their own user for security purposes. 
 
-## Objective 3: Create Test/QA Data Source Functionality
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Select your project.
+3. Navigate to SQL from the left navigation menu.
+4. Click on the SQL instance you want to connect to.
+5. Go to the "Users" section.
+6. Click "Create user account".
+7. Fill in the "User details" form with your preferred username and password.
+8. Click "Create".
 
-- Key Result 1: Design and implement APIs for creating and managing test/QA data sources.
-- Key Result 2: Generate realistic test data with varying volumes and complexities.
-- Key Result 3: Enable easy data population and synchronization between test/QA and production environments.
+Now you have your own user credentials to connect to the database.
 
-## Objective 4: Establish Monitoring and Error Handling Mechanisms
+<a name='connecting-to-the-postgresql-database'></a>
+## **Connecting to the PostgreSQL Database**
 
-- Key Result 1: Implement comprehensive logging to track ETL process activities and performance.
-- Key Result 2: Develop robust error handling mechanisms to handle data integration failures.
-- Key Result 3: Integrate with monitoring tools and establish notifications for prompt error alerts.
+Once your user is created, you can use the following Python script to connect to the PostgreSQL database, named 'gmb' in this case:
 
-## Objective 5: Ensure Scalability and Performance Optimization
+```python
+import psycopg2
 
-- Key Result 1: Identify and resolve performance bottlenecks to support large data volumes.
-- Key Result 2: Optimize data retrieval, transformation, and export processes for faster execution.
-- Key Result 3: Implement caching mechanisms to improve overall system performance.
+# replace with your actual details
+username = 'your_username'
+password = 'your_password'
+public_ip_address = 'your_public_ip_address'
+db_name = 'gmb'
 
+# create a connection
+conn = psycopg2.connect(
+    dbname=db_name,
+    user=username,
+    password=password,
+    host=public_ip_address
+)
+
+# create a cursor
+cur = conn.cursor()
+```
+
+## **Executing SQL Queries**
+With a connection established, you can now execute SQL queries on your database:
+
+```python
+# SQL query to get all table names in the 'gmb' database
+query = """
+SELECT tablename 
+FROM pg_catalog.pg_tables 
+WHERE schemaname != 'pg_catalog' AND 
+      schemaname != 'information_schema';
+"""
+
+# execute the query
+cur.execute(query)
+
+# fetch all the results
+tables = cur.fetchall()
+
+# print the table names
+for table in tables:
+    print(table[0])
+```
+Don't forget to close the cursor and connection after you're done:
+
+```
+# close the cursor and the connection
+cur.close()
+conn.close()
+```
