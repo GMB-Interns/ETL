@@ -13,13 +13,13 @@ To locate and isolate potentially sensitive data within our database, we execute
 ## **4. Anonymizing Sensitive Data**
 With the potentially sensitive data identified, the next step involved anonymizing these data points. Anonymization is the process of removing personally identifiable information from the data set, thus protecting individual privacy. Here are some of the techniques we used:
 
-1. Substitution: This involves replacing a sensitive data field with a random but realistic equivalent. For instance, replacing 'John' under the 'first_name' column with 'User123'.
+***1. Substitution:*** This involves replacing a sensitive data field with a random but realistic equivalent. For instance, replacing 'John' under the 'first_name' column with 'User123'.
 
-2. Redaction: This refers to the process of removing specific data. For instance, we can remove the last octet in IP addresses.
+***2. Redaction:*** This refers to the process of removing specific data. For instance, we can remove the last octet in IP addresses.
 
-3. Generalization: This involves replacing specific data with more generic data. An example is replacing specific street addresses with generic ones like '123 Anonymized St'.
+***3. Generalization:*** This involves replacing specific data with more generic data. An example is replacing specific street addresses with generic ones like '123 Anonymized St'.
 
-4. Pseudonymization: This technique involves replacing sensitive data with artificial identifiers. Although not a form of anonymization, pseudonymization can be used in combination with other techniques to protect sensitive data.
+***4. Pseudonymization:*** This technique involves replacing sensitive data with artificial identifiers. Although not a form of anonymization, pseudonymization can be used in combination with other techniques to protect sensitive data.
 
 ## **5. Creating a New, Anonymized Table**
 To keep our original data intact, we copied the target table, anonymized the sensitive data points in this copied table, and then appended an '_anonymized' suffix to its name.
@@ -48,7 +48,7 @@ Substitution: Replacing a data field with a randomly generated equivalent.
 # **Anonymization vs. De-identification vs. Pseudonymization:**
 Anonymization: This is a data processing technique that removes or modifies personally identifiable information; anonymized data cannot be reversed or re-identified.
 
-De-identification: Involves stripping data sets of all unique identifiers; though similar to anonymization, de-identified data carries more risk because it can potentially be re-identified through linkage with other data.
+##De-identification:## Involves stripping data sets of all unique identifiers; though similar to anonymization, de-identified data carries more risk because it can potentially be re-identified through linkage with other data.
 
-Pseudonymization: This is a data management strategy where personally identifiable information fields are replaced with artificial identifiers or pseudonyms, allowing the data to be linked back to the original data set under specific conditions.
+##Pseudonymization:## This is a data management strategy where personally identifiable information fields are replaced with artificial identifiers or pseudonyms, allowing the data to be linked back to the original data set under specific conditions.
 
