@@ -48,7 +48,7 @@ Substitution: Replacing a data field with a randomly generated equivalent.
 # **Anonymization vs. De-identification vs. Pseudonymization:**
 Anonymization: This is a data processing technique that removes or modifies personally identifiable information; anonymized data cannot be reversed or re-identified.
 
-##De-identification:## Involves stripping data sets of all unique identifiers; though similar to anonymization, de-identified data carries more risk because it can potentially be re-identified through linkage with other data.
+**De-identification:** Involves stripping data sets of all unique identifiers; though similar to anonymization, de-identified data carries more risk because it can potentially be re-identified through linkage with other data.
 
-##Pseudonymization:## This is a data management strategy where personally identifiable information fields are replaced with artificial identifiers or pseudonyms, allowing the data to be linked back to the original data set under specific conditions.
+**Pseudonymization:** This is a data management strategy where personally identifiable information fields are replaced with artificial identifiers or pseudonyms, allowing the data to be linked back to the original data set under specific conditions.
 
