@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 import psycopg2
 import pandas as pd
 import os
+import getpass
 
 app = FastAPI()
 
@@ -14,7 +15,7 @@ print("templaes:", templates_dir)
 templates = Jinja2Templates(directory=templates_dir)
 
 username = 'gmb'
-password = 'rykU,t=5(8-ROE~K' # Replace with the actual password or use getpass.getpass()
+password = getpass.getpass('Enter Password:') 
 public_ip_address = '34.133.118.52'
 db_name = 'gmb'
 
