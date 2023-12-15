@@ -1,0 +1,122 @@
+!pip install mysql-connector-python
+
+import os
+import time
+import subprocess
+from google.cloud import storage
+import mysql.connector
+
+
+# Set your MySQL database configurations
+username = 'gmb'
+password = 'rykU,t=5(8-ROE~K'
+public_ip_address = '35.239.201.185'
+db_name = 'gmb'
+test_db_name = 'gmb_test'  
+
+# Set your GCS bucket configurations
+gcs_bucket_name = 'gmb-database-backup'
+gcs_backup_blob_name = 'backup.sql'
+
+# Path to store the temporary backup file
+TEMP_BACKUP_PATH = '/tmp/backup.sql'
+
+
+## create a backup of the database in the GCP S3 folder
+def create_mysql_backup():
+    try:
+        # Construct the mysqldump command
+        cmd = f"mysqldump -h {public_ip_address} -u {username} -p{password} {db_name} > {TEMP_BACKUP_PATH}"
+        
+        # Execute the mysqldump command
+        subprocess.run(cmd, shell=True, check=True)
+        print("MySQL backup created successfully")
+    except Exception as e:
+        print("Error creating MySQL backup:", str(e))
+    
+def upload_backup_to_gcs():
+    try:
+        # Initialize GCS client
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(gcs_bucket_name)
+        
+        # Upload the backup file to GCS
+        blob = bucket.blob(gcs_backup_blob_name)
+        blob.upload_from_filename(TEMP_BACKUP_PATH)
+        print("Backup uploaded to GCS successfully")
+    except Exception as e:
+        print("Error uploading backup to GCS:", str(e))
+        
+## Allow user to create a new (test) data base  
+def create_test_database():
+    try:
+        connection = mysql.connector.connect(
+            host=public_ip_address,
+            user=username,
+            password=password,
+            database='',
+        )
+        
+        cursor = connection.cursor()
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {test_db_name}")
+        cursor.close()
+        connection.close()
+        print(f"Test database '{test_db_name}' created successfully")
+    except Exception as e:
+        print("Error creating test database:", str(e))
+        
+## restore the backup of the database to the test database.
+def restore_backup_to_test_database():
+    try:
+        connection = mysql.connector.connect(
+            host=public_ip_address,
+            user=username,
+            password=password,
+            database=test_db_name,
+        )
+        
+        cursor = connection.cursor()
+        with open(TEMP_BACKUP_PATH, 'r') as backup_file:
+            sql_statements = backup_file.read()
+            cursor.execute(sql_statements, multi=True)
+        
+        cursor.close()
+        connection.commit()
+        connection.close()
+        print("Backup restored to test database successfully")
+    except Exception as e:
+        print("Error restoring backup to test database:", str(e))
+
+## Test backend code config with new restored database for testing
+def test_backend_code():
+    try:
+        # Initialize MySQL connection
+        connection = mysql.connector.connect(
+            host=public_ip_address,
+            user=username,
+            password=password,
+            database=db_name  # Use the restored database
+        )
+
+        cursor = connection.cursor()
+
+        # Perform actions with the database
+        # For example:
+        # cursor.execute("SELECT * FROM your_table;")
+        # data = cursor.fetchall()
+        # print(data)
+
+        cursor.close()
+        connection.close()
+
+    except Exception as e:
+        print("Error testing backend code:", str(e))
+        
+
+if __name__ == "__main__":
+    create_mysql_backup()
+    upload_backup_to_gcs()
+    create_test_database()
+    restore_backup_to_test_database()
+    test_backend_code()
+    os.remove(TEMP_BACKUP_PATH)  # Remove the temporary backup file
